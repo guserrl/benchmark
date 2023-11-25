@@ -1,4 +1,9 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -49,16 +54,16 @@ public class principal {
 					});t.start();
 				}break;
 				case 2:{
-					System.out.println("Esta prueba calcula los posibles numeros de pi que permite java \n"
-							+ "con un algoritmo simple  (Tener en cuenta que la precision y valores a mostrar estaran limitados) \n");
+					System.out.println("Esta prueba calcula decimales de pi \n"
+							+ "con un algoritmo de GAUSS  (Tener en cuenta que la precision y valores a mostrar estaran limitados) \n");
 					System.out.println("Cuantas numeros?maximo numoro a leer = 2,147,483,647");
 					int piNum = sc.nextInt();
-					primo(numCPU, piNum);
+					pi(piNum);
 				}break;
 				case 3:{
 					System.out.println("Esta prueba calculara todos los numero primos asta el valor que proporciones \n"
-							+ " y luego indicara cuanto tardaria en mostrar esos valoresmaximo numoro a leer = 2,147,483,647");
-					System.out.println("Valor techo?");
+							+ " y luego indicara cuanto tarda en escribir esos valores en el log");
+					System.out.println("Valor? maximo numoro a leer = 2,147,483,647");
 					int primos = sc.nextInt();
 					Thread t = new Thread(new Runnable() {
 						
@@ -91,28 +96,31 @@ public class principal {
 		System.out.println("Empiezan las carreras, puede continuar on otra cosa");
 	}
 
-	public static void pi(int numCPU,int n) {
-		ExecutorService pool = Executors.newFixedThreadPool(numCPU);
-		final CountDownLatch starter = new CountDownLatch(numCPU);
-		List<Future<Double>> l = new ArrayList<>();
+	public static void pi(int n) {
+		ExecutorService pool = Executors.newCachedThreadPool();
+		//final CountDownLatch starter = new CountDownLatch(numCPU);
+		Future<BigDecimal> l = null;
 		int numerosPI = n;// puedo poner esto como variable
 		long t1 = System.currentTimeMillis();
-		for (int i = 0; i < numCPU; i++) {
+		l = pool.submit(new PI(numerosPI));
+		/*for (int i = 1; i < numCPU; i++) {
 			int inicio = i * (numerosPI / numCPU);
 			int fin = (i + 1) * (numerosPI / numCPU) - 1;
 			l.add(pool.submit(new PI(inicio, fin, starter)));
 			inicio = fin + 1;
 			fin += fin;
-		}
-		starter.countDown();
+		}*/
+		//starter.countDown();
 		pool.shutdown();
 		long t2 = System.currentTimeMillis() - t1;
 		System.out.println("Ha tardado en calcular :" + t2 / 1000.0 + "s");
-		double resultadoFinal = 0.0;
+		/*double resultadoFinal = 0.0;
 		// Si no uso threads para leer tarda mas en hacer el bucle que en calcular
 		for (int i = 0; i < l.size(); i++) {
 			try {
-				resultadoFinal += l.get(i).get();
+				//System.out.println("resltdofinal antes: "+resultadoFinal.toString());
+				resultadoFinal += l.get(i).get(); //+= l.get(i).get();
+				//System.out.println("resltdofinal despues: "+resultadoFinal.toString());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -121,8 +129,17 @@ public class principal {
 				e.printStackTrace();
 			}
 		}
-		resultadoFinal *= 4;
-		System.out.println("PI:" + resultadoFinal);
+		resultadoFinal *= 4;*/
+		try {
+			System.out.println("PI:" + l.get());
+			//System.out.println("double:"+l.get().doubleValue());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void primo(int numCPU,int n) {
@@ -134,8 +151,6 @@ public class principal {
 		int rangoInicio = 1;
         int rangoFin = n;//200000000
         int rangoPorThread = (rangoFin - rangoInicio ) / numCPU;
-        //int inicio = rangoInicio;
-        //int fin = inicio + rangoPorThread;
         long t1 = System.currentTimeMillis();
         for (int i = 0; i < numCPU; i++) {
         	int inicio = rangoInicio + i * rangoPorThread;;
@@ -154,15 +169,32 @@ public class principal {
 		pool.shutdown();
 		long t2 = System.currentTimeMillis() - t1;
 		System.out.println("Ha tardado en calcular:" + t2 / 1000.0 + "s");
-		//Deberia usar hilos para esto pero que pereza
-		
+		//lLResultados ya calculados
+		//Logs
+		File f = new File("logs_primo");
+		if(!f.exists() || !f.isDirectory()) {
+			f.mkdir();
+		};
+		File f2 = new File(f,"logs_numeros_primos.txt");
+		if(f2.exists()) {
+			PrintWriter writer;
+			//Poner a cero
+			try {
+				writer = new PrintWriter(f2);
+				writer.print("");
+				writer.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		final CountDownLatch c = new CountDownLatch(numCPU);
 		ExecutorService pool2 = Executors.newFixedThreadPool(numCPU);
 		t1 = System.currentTimeMillis();
 		for(int i=0;i<l.size();i++) {
 			try {
 				List<Integer> l2 = l.get(i).get();
-				pool2.execute(new MostrarPrimos(l2,c));
+				pool2.execute(new MostrarPrimos(l2,c,f2));
 			} catch (InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -9,6 +11,7 @@ public class Primo implements Callable<List<Integer>>{
     private int fin;
     private List<Integer> l=new ArrayList<>();
     private CyclicBarrier barrera;
+    
 	public Primo(int inicio, int fin,CyclicBarrier barrera) {
 		super();
 		this.inicio = inicio;

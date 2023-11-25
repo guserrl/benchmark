@@ -29,7 +29,7 @@ public Peticiones(URL url, String key, String value, String accept,int id) {
 		super.run();
 		HttpURLConnection con;
 		File dir = new File("logs");
-		dir.mkdir();
+		if(!dir.exists() || !dir.isDirectory()) dir.mkdir();
 		File f = new File(dir, "log_id_"+id+".txt");
 		try {
 			FileOutputStream fo = new FileOutputStream(f);
