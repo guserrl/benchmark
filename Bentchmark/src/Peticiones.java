@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 
 
 //leer de una peticion get el archivo  mirar cuanto tarda
@@ -27,7 +28,9 @@ public Peticiones(URL url, String key, String value, String accept,int id) {
 		// TODO Auto-generated method stub
 		super.run();
 		HttpURLConnection con;
-		File f = new File("logs", "log_id_"+id+".txt");
+		File dir = new File("logs");
+		dir.mkdir();
+		File f = new File(dir, "log_id_"+id+".txt");
 		try {
 			FileOutputStream fo = new FileOutputStream(f);
 			con = (HttpURLConnection) url.openConnection();
