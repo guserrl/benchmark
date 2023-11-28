@@ -30,7 +30,9 @@ public Peticiones(URL url, String key, String value, String accept,int id) {
 		HttpURLConnection con;
 		File dir = new File("logs");
 		if(!dir.exists() || !dir.isDirectory()) dir.mkdir();
-		File f = new File(dir, "log_id_"+id+".txt");
+		String a[] = url.getFile().split("/");
+		String nombre = a[a.length-1];
+		File f = new File(dir,nombre );//"log_id_"+id+".txt"
 		try {
 			FileOutputStream fo = new FileOutputStream(f);
 			con = (HttpURLConnection) url.openConnection();

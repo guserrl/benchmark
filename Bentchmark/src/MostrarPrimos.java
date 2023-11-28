@@ -26,10 +26,10 @@ public MostrarPrimos(List<Integer> l,CountDownLatch c,File f) {
 	try{
 		RandomAccessFile raf = new RandomAccessFile(f, "rw");
 		if(f.length()!=0) {
+			//raf.writeBytes("\n");
 			raf.seek(f.length());
-			raf.writeBytes("\n");
 		}
-		super.run();
+		
 		for(int j=0;j<l.size();j++) {
 			//System.out.println(l.get(j));  //funciona
 			raf.writeBytes(" "+l.get(j)+"\n");

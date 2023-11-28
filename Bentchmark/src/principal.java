@@ -56,7 +56,7 @@ public class principal {
 				case 2:{
 					System.out.println("Esta prueba calcula decimales de pi \n"
 							+ "con un algoritmo de GAUSS  (Tener en cuenta que la precision y valores a mostrar estaran limitados) \n");
-					System.out.println("Cuantas numeros?maximo numoro a leer = 2,147,483,647");
+					System.out.println("Cuantas numeros?");
 					int piNum = sc.nextInt();
 					pi(piNum);
 				}break;
@@ -76,7 +76,7 @@ public class principal {
 				}break;
 				case 4:{
 					
-					System.out.println("Esta prueba mide cuanto tardarias en realizar peticiones get a una res api");
+					System.out.println("Esta prueba mide cuanto tardarias en realizar peticiones get y descargar su contenido");
 					peticiones(numCPU);
 				}
 			}
@@ -191,10 +191,14 @@ public class principal {
 		final CountDownLatch c = new CountDownLatch(numCPU);
 		ExecutorService pool2 = Executors.newFixedThreadPool(numCPU);
 		t1 = System.currentTimeMillis();
-		for(int i=0;i<l.size();i++) {
+		for(int i=0;i<l.size();i++) {	
 			try {
 				List<Integer> l2 = l.get(i).get();
-				pool2.execute(new MostrarPrimos(l2,c,f2));
+				MostrarPrimos m = new MostrarPrimos(l2,c,f2);
+				synchronized (m) {
+					pool2.execute(m);
+				}
+				//pool2.execute(new MostrarPrimos(l2,c,f2));
 			} catch (InterruptedException | ExecutionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -214,8 +218,10 @@ public class principal {
 	public static void peticiones(int numCPU) {
 		try {
 			System.out.println("Introudce url");
-			System.out.println("Ejemplo: https://www.fruityvice.com/api/fruit/all");
+			System.out.println("Ejemplo REST: https://www.fruityvice.com/api/fruit/all");
 			System.out.println("Repositorio con apis: https://github.com/public-apis/public-apis#index");
+			System.out.println("Ejemplo zip: https://www.bis.org/statistics/full_tc_csv.zip");
+			System.out.println("Repositorio con datasets: https://github.com/awesomedata/awesome-public-datasets#finance");
 			Scanner sc = new Scanner(System.in);
 			String url = sc.nextLine();
 			
