@@ -89,8 +89,8 @@ public class principal {
 	public static void carreras(int n, int N) {
 		System.out.println("Se crearan carreras que iniciaran cada 10 segundos");
 		// System.out.println("Se va a usar el maximo numero posible en java");
+		Timer t = new Timer();
 		for (int i = 0; i < n; i++) {
-			Timer t = new Timer();
 			t.schedule(new Carrera(N, i), 10000);
 		}
 		System.out.println("Empiezan las carreras, puede continuar on otra cosa");
